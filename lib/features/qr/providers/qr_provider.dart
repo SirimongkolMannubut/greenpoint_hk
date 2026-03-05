@@ -1,12 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/models/qr_model.dart';
 
-final qrProvider = StateNotifierProvider<QRNotifier, QRModel?>((ref) {
-  return QRNotifier();
-});
-
-class QRNotifier extends StateNotifier<QRModel?> {
-  QRNotifier() : super(null);
+class QRNotifier extends Notifier<QRModel?> {
+  @override
+  QRModel? build() => null;
 
   void generateQR() {
     state = QRModel(
@@ -16,3 +13,5 @@ class QRNotifier extends StateNotifier<QRModel?> {
     );
   }
 }
+
+final qrProvider = NotifierProvider<QRNotifier, QRModel?>(QRNotifier.new);

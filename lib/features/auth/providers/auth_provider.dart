@@ -6,21 +6,18 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepository(ref.watch(supabaseProvider));
 });
 
-final authProvider = StateNotifierProvider<AuthNotifier, AsyncValue<void>>((ref) {
-  return AuthNotifier(ref.watch(authRepositoryProvider));
-});
-
-class AuthNotifier extends StateNotifier<AsyncValue<void>> {
-  final AuthRepository _repository;
-
-  AuthNotifier(this._repository) : super(const AsyncValue.data(null));
+class AuthNotifier extends Notifier<AsyncValue<void>> {
+  @override
+  AsyncValue<void> build() => const AsyncValue.data(null);
 
   Future<void> signIn(String email, String password) async {
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() => _repository.signIn(email, password));
+    state = await AsyncValue.guard(() => ref.read(authRepositoryProvider).signIn(email, password));
   }
 
   Future<void> signOut() async {
-    await _repository.signOut();
+    await ref.read(authRepositoryProvider).signOut();
   }
 }
+
+final authProvider = NotifierProvider<AuthNotifier, AsyncValue<void>>(AuthNotifier.new);

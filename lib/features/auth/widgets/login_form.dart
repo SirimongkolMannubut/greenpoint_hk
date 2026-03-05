@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_textfield.dart';
+import '../../../routes/app_router.dart';
 import '../providers/auth_provider.dart';
 
 class LoginForm extends ConsumerStatefulWidget {
@@ -18,7 +19,19 @@ class _LoginFormState extends ConsumerState<LoginForm> {
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authProvider);
+
+    ref.listen(authProvider, (previous, next) {
+      next.whenOrNull(
+        data: (_) => Navigator.pushReplacementNamed(context, AppRouter.dashboard),
+        error: (error, _) => ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login failed: $error')),
+        ),
+      );
+    });
+
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         AppTextField(
           controller: _emailController,
@@ -31,15 +44,17 @@ class _LoginFormState extends ConsumerState<LoginForm> {
           obscureText: true,
         ),
         const SizedBox(height: 24),
-        AppButton(
-          text: AppStrings.login,
-          onPressed: () {
-            ref.read(authProvider.notifier).signIn(
-              _emailController.text,
-              _passwordController.text,
-            );
-          },
-        ),
+        authState.isLoading
+            ? const CircularProgressIndicator()
+            : AppButton(
+                text: AppStrings.login,
+                onPressed: () {
+                  ref.read(authProvider.notifier).signIn(
+                    _emailController.text,
+                    _passwordController.text,
+                  );
+                },
+              ),
       ],
     );
   }

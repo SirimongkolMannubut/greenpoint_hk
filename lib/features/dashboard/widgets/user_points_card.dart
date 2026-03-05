@@ -7,13 +7,22 @@ class UserPointsCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final points = ref.watch(pointsProvider);
+    final profile = ref.watch(profileProvider);
 
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: points.when(
-          data: (data) => Text('คะแนนทั้งหมด: ${data.length}'),
+        child: profile.when(
+          data: (data) => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('สวัสดี ${data.fullName ?? data.email}', 
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              Text('คะแนนของคุณ: ${data.points}', 
+                style: const TextStyle(fontSize: 24, color: Colors.green)),
+            ],
+          ),
           loading: () => const CircularProgressIndicator(),
           error: (e, s) => Text('Error: $e'),
         ),

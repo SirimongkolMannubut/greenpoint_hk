@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/qr_provider.dart';
 
@@ -13,13 +14,11 @@ class QRDisplay extends ConsumerWidget {
       return const Text('กดปุ่มเพื่อสร้าง QR Code');
     }
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.black),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Text(qr.code, style: const TextStyle(fontSize: 20)),
+    return QrImageView(
+      data: qr.code,
+      version: QrVersions.auto,
+      size: 200.0,
+      backgroundColor: Colors.white,
     );
   }
 }
